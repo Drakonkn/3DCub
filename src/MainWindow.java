@@ -119,9 +119,6 @@ public class MainWindow extends JFrame implements ActionListener {
 		painter.repaint();
 	}
 
-	
-	
-	
 	  public static void main(String[] args){
 		    SwingUtilities.invokeLater(new Runnable(){
 		      public void run(){
@@ -188,7 +185,8 @@ public class MainWindow extends JFrame implements ActionListener {
 			for (int i = 0; i<spotLight.size();i++){
 				s = spotLight.get(i);	
 				double cosA = s.getCos(xN,yN,zN,xA,yA,zA);
-				double mulA = cosA*s.power;
+				double cosB = calcCos(xN,yN,zN,xA,yA,zA);
+				double mulA = cosA*s.power*cosB;
 				r += (s.getR()* mulA)<10?10:(int) (s.getR()* mulA);
 				g += (s.getG()* mulA)<10?10:(int) (s.getG()* mulA);
 				b += (s.getB()* mulA)<10?10:(int) (s.getB()* mulA);
@@ -292,6 +290,30 @@ public class MainWindow extends JFrame implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			rep();
+			
+		}
+		
+		double calcCos(double Nx, double Ny, double Nz, double x, double y, double z){
+			double Ex = q * Math.sin(Math.toRadians(f))*Math.cos(Math.toRadians(a));
+			double Ey = q * Math.sin(Math.toRadians(f))*Math.sin(Math.toRadians(a));
+			double Ez = q * Math.cos(Math.toRadians(f));
+			
+
+			
+			double X = Ex -x;
+			double Y = Ey -y;
+			double Z = Ez -z;
+			
+			double length = Math.sqrt(X*X + Y*Y + Z*Z);
+			
+			X /= length;
+			Y /= length;
+			Z /= length;
+			
+			double mul = (x*X) + (y*Y) + (z*Z);
+			double length1 = Math.sqrt(X*X+Y*Y+Z*Z);
+			double length2 = Math.sqrt(x*x+y*y+z*z);
+			return Math.abs(mul/(length1*length2));
 			
 		}
 }
