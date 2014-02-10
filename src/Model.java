@@ -25,14 +25,14 @@ public class Model {
 
 		vector = new Vector<triangle>();
 		
-		E = new Point3D( 2, -2, -2);
-		F = new Point3D(-2, -2, -2);
-		B = new Point3D(-2, -2,  2);
-		A = new Point3D( 2, -2,  2);
-		D = new Point3D( 2,  2,  2);
-		H = new Point3D( 2,  2, -2);
-		C = new Point3D(-2,  2,  2);
-		G = new Point3D(-2,  2, -2);
+		E = new Point3D( 20, -20, -20);
+		F = new Point3D(-20, -20, -20);
+		B = new Point3D(-20, -20,  20);
+		A = new Point3D( 20, -20,  20);
+		D = new Point3D( 20,  20,  20);
+		H = new Point3D( 20,  20, -20);
+		C = new Point3D(-20,  20,  20);
+		G = new Point3D(-20,  20, -20);
 		
 		
 		I = new Point3D( 0,  0,  2);
@@ -43,41 +43,58 @@ public class Model {
 		N = new Point3D(-2,  0,  0);
 		
 		
+		vector.add(new triangle(A,D,E));
+		vector.add(new triangle(H,D,E));
+		
+		vector.add(new triangle(D,C,H));
+		vector.add(new triangle(G,C,H));
+		
+		vector.add(new triangle(C,G,B));
+		vector.add(new triangle(F,G,B));
+		
+		vector.add(new triangle(B,F,A));
+		vector.add(new triangle(E,F,A));
+		
+		vector.add(new triangle(A,D,B));
+		vector.add(new triangle(C,D,B));
+		
+		vector.add(new triangle(F,G,E));
+		vector.add(new triangle(H,G,E));
 		
 		
-		vector.add(new triangle(A,B,I));
-		vector.add(new triangle(C,B,I));
-		vector.add(new triangle(C,D,I));
-		vector.add(new triangle(A,D,I));
-		
-		
-		vector.add(new triangle(A,D,M));
-		vector.add(new triangle(D,H,M));
-		vector.add(new triangle(H,E,M));
-		vector.add(new triangle(E,A,M));
-		
-		
-		vector.add(new triangle(A,B,K));
-		vector.add(new triangle(B,F,K));
-		vector.add(new triangle(F,E,K));
-		vector.add(new triangle(E,A,K));
-		
-		vector.add(new triangle(B,C,N));
-		vector.add(new triangle(C,G,N));
-		vector.add(new triangle(G,F,N));
-		vector.add(new triangle(F,B,N));
-		
-
-		vector.add(new triangle(E,F,J));
-		vector.add(new triangle(F,G,J));
-		vector.add(new triangle(G,H,J));
-		vector.add(new triangle(H,E,J));
-		
-
-		vector.add(new triangle(D,C,L));
-		vector.add(new triangle(C,G,L));
-		vector.add(new triangle(G,H,L));
-		vector.add(new triangle(H,D,L));
+//		vector.add(new triangle(A,B,I));
+//		vector.add(new triangle(C,B,I));
+//		vector.add(new triangle(C,D,I));
+//		vector.add(new triangle(A,D,I));
+//		
+//		
+//		vector.add(new triangle(A,D,M));
+//		vector.add(new triangle(D,H,M));
+//		vector.add(new triangle(H,E,M));
+//		vector.add(new triangle(E,A,M));
+//		
+//		
+//		vector.add(new triangle(A,B,K));
+//		vector.add(new triangle(B,F,K));
+//		vector.add(new triangle(F,E,K));
+//		vector.add(new triangle(E,A,K));
+//		
+//		vector.add(new triangle(B,C,N));
+//		vector.add(new triangle(C,G,N));
+//		vector.add(new triangle(G,F,N));
+//		vector.add(new triangle(F,B,N));
+//		
+//
+//		vector.add(new triangle(E,F,J));
+//		vector.add(new triangle(F,G,J));
+//		vector.add(new triangle(G,H,J));
+//		vector.add(new triangle(H,E,J));
+//		
+//
+//		vector.add(new triangle(D,C,L));
+//		vector.add(new triangle(C,G,L));
+//		vector.add(new triangle(G,H,L));
+//		vector.add(new triangle(H,D,L));
 	}
 	
 	

@@ -16,12 +16,12 @@ import javax.swing.SwingUtilities;
 
 public class MainWindow extends JFrame implements ActionListener {
 
-	double q = 10;
+	double q = 100;
 	double f = 45;
 	double a = 45;
 	
-	double scale = 150;
-	double xPosition = 0;
+	double scale = 20;
+	double xPosition = -500;
 	double yPosition = 0;
 	
 	int lastMousePosX;
@@ -33,16 +33,21 @@ public class MainWindow extends JFrame implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	private Painter painter;
 	private Model model3D;
-	SpotLight s = new SpotLight();
+	Vector<SpotLight> spotLight;
 
 	private Model origin;
 	
 	public MainWindow(){
 		super();
+		spotLight = new Vector<SpotLight>();
+		spotLight.add(new SpotLight(new Color(0xFF0000),new Point3D(13, 13, 13)));
+		spotLight.add(new SpotLight(new Color(0x00FF00),new Point3D(-13, 13, 13)));
+		spotLight.add(new SpotLight(new Color(0x0000FF),new Point3D(-13,-13,-13)));
 		origin = new Model();
 		model3D = new Model();
 		painter = new Painter();
 		painter.setModel(model3D);
+		painter.setSpotLight(spotLight);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
 		setSize(500, 500);
@@ -131,11 +136,14 @@ public class MainWindow extends JFrame implements ActionListener {
 				triangle tr = origin.getVector().get(i);
 				triangle tr2 = vector.get(i);
 				
-				vector.get(i).A = pointToView(tr.A);//new Point3D(product(tr.A.getMatrix(), V, 1, 4, 4, 4));
-				vector.get(i).B = pointToView(tr.B);//new Point3D(product(tr.B.getMatrix(), V, 1, 4, 4, 4));
-				vector.get(i).C = pointToView(tr.C);//new Point3D(product(tr.C.getMatrix(), V, 1, 4, 4, 4));
+				vector.get(i).A = pointToView(tr.A);
+				vector.get(i).B = pointToView(tr.B);
+				vector.get(i).C = pointToView(tr.C);
 				
-				//s.coordinates = pointToView(s.coordinates);
+				for (int k =0; k<spotLight.size();k++){
+					spotLight.get(k).setViewCoordinates(pointToView(spotLight.get(k).getCoordinates()));
+				}
+				
 				
 				double xA,xB,xC,yA,yB,yC,zA,zB,zC, xN, yN,zN;
 				xA = tr2.A.getX();
@@ -159,38 +167,34 @@ public class MainWindow extends JFrame implements ActionListener {
 				xN /= lengthN;
 				yN /= lengthN;
 				zN /= lengthN;
-				int r,g,b;
-
 				
-				double cosA = s.getCos(xN,yN,zN,xA,yA,zA);
-				double cosB = s.getCos(xN,yN,zN,xB,yB,zB);
-				double cosC = s.getCos(xN,yN,zN,xC,yC,zC);
-				
-				double mulA = cosA*s.power;
-				double mulB = cosB*s.power;
-				double mulC = cosC*s.power;
-				
-				
-				
-				r = (s.getR()* mulA)<10?(int) (s.getR()* mulA)+10:(int) (s.getR()* mulA);
-				g = (s.getG()* mulA)<10?(int) (s.getG()* mulA)+10:(int) (s.getG()* mulA);
-				b = (s.getB()* mulA)<10?(int) (s.getB()* mulA)+10:(int) (s.getB()* mulA);
-				tr2.A.color = new Color(r,g,b);
-				
-				r = (s.getR()* mulB)<10?(int) (s.getR()* mulB)+10:(int) (s.getR()* mulB);
-				g = (s.getG()* mulB)<10?(int) (s.getG()* mulB)+10:(int) (s.getG()* mulB);
-				b = (s.getB()* mulB)<10?(int) (s.getB()* mulB)+10:(int) (s.getB()* mulB);
-				tr2.B.color = new Color(r,g,b);
-				
-				r = (s.getR()* mulC)<10?(int) (s.getR()* mulC)+10:(int) (s.getR()* mulC);
-				g = (s.getG()* mulC)<10?(int) (s.getG()* mulC)+10:(int) (s.getG()* mulC);
-				b = (s.getB()* mulC)<10?(int) (s.getB()* mulC)+10:(int) (s.getB()* mulC);
-				tr2.C.color = new Color(r,g,b);
+				tr2.A.color = calcColor(tr2.A, xN, yN, zN);
+				tr2.B.color = calcColor(tr2.B, xN, yN, zN);
+				tr2.C.color = calcColor(tr2.C, xN, yN, zN);
 			}
 			
 			return ;
 			
 		}
+	  
+	  private Color calcColor(Point3D A,double xN,double yN,double zN){
+		  double xA,yA,zA;
+			xA = A.getX();
+			yA = A.getY();
+			zA = A.getZ();
+			int r = 0,g = 0,b = 0;
+
+			SpotLight s;
+			for (int i = 0; i<spotLight.size();i++){
+				s = spotLight.get(i);	
+				double cosA = s.getCos(xN,yN,zN,xA,yA,zA);
+				double mulA = cosA*s.power;
+				r += (s.getR()* mulA)<10?10:(int) (s.getR()* mulA);
+				g += (s.getG()* mulA)<10?10:(int) (s.getG()* mulA);
+				b += (s.getB()* mulA)<10?10:(int) (s.getB()* mulA);
+			}
+			return new Color(r>255?255:r,g>255?255:g,b>255?255:b);
+	  }
 		
 	  public static double[][] product(double[][] first, double[][] second, int row1, int col1,
 				int row2, int col2) {
@@ -208,11 +212,13 @@ public class MainWindow extends JFrame implements ActionListener {
 	  private void getProject(){
 		
 			getView();
+			
+			for (int k =0; k<spotLight.size();k++){
+				spotLight.get(k).coordinates2D = pointTo2D(spotLight.get(k).getViewCoordinates());
+			}
+			
 			Vector<triangle> vector= model3D.getVector();
 			for ( int i =0; i<vector.size();i++) {
-			
-				
-				
 				model3D.getVector().get(i).A2 = pointTo2D(model3D.getVector().get(i).A);
 				model3D.getVector().get(i).B2 = pointTo2D(model3D.getVector().get(i).B);
 				model3D.getVector().get(i).C2 = pointTo2D(model3D.getVector().get(i).C);
@@ -245,7 +251,7 @@ public class MainWindow extends JFrame implements ActionListener {
 				{
 					{this.scale,0,0,0},
 					{0,this.scale,0,0},
-					{0,0,5,0},
+					{0,0,1,0},
 					{xPosition,yPosition,0,0}
 				};
 			V = product(V, scale, 4, 4, 4, 4);
@@ -253,11 +259,11 @@ public class MainWindow extends JFrame implements ActionListener {
 		}
 		
 		private Point2D pointTo2D(Point3D point){
-			double screenDist = 5;
-			double C1 = 10;
-			double C2 = 10;
-			double x = screenDist * (point.getX()/ point.getZ() + C1);
-			double y = screenDist * (point.getY()/ point.getZ() + C2);
+			double screenDist = 8;
+			double C1 = 50;
+			double C2 = 50;
+			int x = (int)(screenDist * (point.getX()/ point.getZ() + C1));
+			int y = (int)(screenDist * (point.getY()/ point.getZ() + C2));
 			return new Point2D(x,y,point.color);
 		}
 		

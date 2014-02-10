@@ -1,9 +1,13 @@
+
+
 import java.awt.Color;
 import java.awt.Graphics;
-import java.math.BigDecimal;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Collections;
 import java.util.Vector;
 
+import javax.swing.JButton;
 import javax.swing.JPanel;
 
 
@@ -14,17 +18,41 @@ public class Painter extends JPanel{
 	 */
 	private static final long serialVersionUID = 1L;
 	private Model model;
-	final double resize = 15;
-	final double move = -500;
-	private static final int simpleMode = 0;
-	private static final int arrayMode = 1;
-	private int mode = simpleMode;
-	private Color arrayModel[][];
-	private final int  width = 500;
-	private final int height = 500;
+	final double resize = 1;
+	final int move = -150;
+	static final int simpleMode = 0;
+	static final int fong = 1;
+	int mode = simpleMode;
+	Vector<SpotLight> spotLights;
 	
-	public Painter() {
-		arrayModel = new Color[width][height];
+	public void simple(){
+		mode = simpleMode;
+	}
+	
+	public void fong() {
+		mode = fong;
+	}
+		public Painter() {
+		JButton simple = new JButton("Simple");
+		JButton fong   = new JButton("Fong");
+		
+		simple.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent e) {
+				simple();
+				
+			}
+		});
+		
+		fong.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				fong();
+				
+			}
+		});
+		
+		add(fong);
+		add(simple);
 		model = new Model();
 		setBackground(new Color(0x000000));
 		setDoubleBuffered(true);
@@ -33,39 +61,47 @@ public class Painter extends JPanel{
 	public void setModel(Model model) {
 		this.model = model;
 	}
+	
+	public void setSpotLight(Vector<SpotLight> sp){
+		this.spotLights = sp;
+	}
 
 	protected void paintComponent(Graphics graphic){
 	    super.paintComponent(graphic);
 
-	    double x1 = 58.19799756681837; double y1 = 42.70383600915479; double x2 = 41.80200243318164; double y2= 42.7038360091548; double x3 = 50.0; double y3 = 50.87186655660077;
-	    rastrTriangl(graphic,new Point2D(x1,y1,new Color(0x0000FF)), new Point2D(x2,y2,new Color(0x00FF00)),new Point2D(x3, y3, new Color(0xFF0000)));
+
 		Vector<triangle> vector =  model.getVector();
 		Collections.sort(vector, new ZCompporator());
 		switch (mode) {
 		case simpleMode:
 				simpleFill(graphic);
 			break;
-		case arrayMode:
-			drawArray(graphic);
+		case fong:
+				fong(graphic);
 			break;
 
 		default:
 			break;
 		}
 		
+	    for (int i = 0;i<spotLights.size();i++){
+	    	DrawDot(graphic, spotLights.get(i).getCoordinates2D());
+	    }
+		
 	}
 	
-	
-	public void setArrayModel(Color[][] arrayModel) {
-		this.arrayModel = arrayModel;
-	}
-
-	private void drawArray(Graphics graphic){
-		for(int i = 0; i<width;i++)
-			for(int j = 0; j<height;j++){
-				graphic.setColor(arrayModel[i][j]);
-				graphic.drawRect(i, j, 1, 1);
-			}
+	private void fong(Graphics graphic) {
+		Vector<triangle> vector =  model.getVector();
+		for (int i = 0; i<vector.size();i++) {
+			int r,g,b;
+			
+			r = (vector.get(i).A2.color.getRed() + vector.get(i).B2.color.getRed() + vector.get(i).C2.color.getRed())/3;
+			g = (vector.get(i).A2.color.getGreen() + vector.get(i).B2.color.getGreen() + vector.get(i).C2.color.getGreen())/3;
+			b = (vector.get(i).A2.color.getBlue() + vector.get(i).B2.color.getBlue() + vector.get(i).C2.color.getBlue())/3;
+			
+			graphic.setColor(new Color(r,g,b));
+			drawTriangle(graphic,vector.get(i).A2,vector.get(i).B2,vector.get(i).C2);
+		}
 	}
 	
 	private void simpleFill(Graphics graphic){
@@ -84,13 +120,7 @@ public class Painter extends JPanel{
 			b = (vector.get(i).A2.color.getBlue() + vector.get(i).B2.color.getBlue() + vector.get(i).C2.color.getBlue())/3;
 			
 			graphic.setColor(new Color(r,g,b));
-			//graphic.fillPolygon(x, y, 3);
-			//rastrTriangl(graphic,vector.get(i).A2,vector.get(i).B2,vector.get(i).C2);
-			drawTriangle(graphic,vector.get(i).A2,vector.get(i).B2,vector.get(i).C2);
-			//graphic.fillPolygon(x, y, 3);
-//			DrawDot(graphic, vector.get(i).A2);
-//			DrawDot(graphic, vector.get(i).B2);
-//			DrawDot(graphic, vector.get(i).C2);
+			graphic.fillPolygon(x, y, 3);
 		}
 	}
 
@@ -100,7 +130,7 @@ public class Painter extends JPanel{
 	
 	private void DrawDot(Graphics g, Point2D point){
 		g.setColor(point.getColor());
-		g.fillRect((int)point.getX(),(int)point.getY(), 4, 4);
+		g.fillRect((int)(point.getX()+move),(int)(point.getY()+move), 4, 4);
 	}
 
 	void drawTriangle(Graphics g, int x1, int y1, int x2, int y2, int x3, int y3,
@@ -247,7 +277,7 @@ public class Painter extends JPanel{
 	
 
 	void drawTriangle(Graphics g, Point2D A, Point2D B, Point2D C){
-
+		
 		g.setColor(A.getColor());
 		g.fillRect(400, 40, 20, 20);
 		g.setColor(B.getColor());
@@ -259,7 +289,12 @@ public class Painter extends JPanel{
 		Point2D mid = B;
 		Point2D bot = C;
 		
-		
+//		A.setX((int)(A.getX() * resize + move));
+//		A.setY((int)(A.getY() * resize + move));
+//		B.setX((int)(B.getX() * resize + move));
+//		B.setY((int)(B.getY() * resize + move));
+//		C.setX((int)(C.getX() * resize + move));
+//		C.setY((int)(C.getY() * resize + move));
 		
 		Point2D temp;
 		
@@ -282,21 +317,17 @@ public class Painter extends JPanel{
 			bot=temp;
 		}
 		
-		double x1 = top.getX();
-		double y1 = top.getY();
-		double x2 = mid.getX();
-		double y2 = mid.getY();
-		double x3 = bot.getX();
-		double y3 = bot.getY();
-		
-		//String str = new String("x1 = "+x1+" y1 = "+y1+" x2 = "+x2+" y2= "+y2+" x3 = "+x3+" y3 = "+y3);
-		//System.err.println(str);
-		
-		
+		int x1 = top.getX()+move;
+		int y1 = top.getY()+move;
+		int x2 = mid.getX()+move;
+		int y2 = mid.getY()+move;
+		int x3 = bot.getX()+move;
+		int y3 = bot.getY()+move;
+
 		double dx13 = 0, dx12 = 0, dx23 = 0;
 		if (y3 != y1) {
 			dx13 = x3 - x1;
-			dx13 /= ((y3 - y1)+0.5);
+			dx13 /= ((y3 - y1))+1;
 		}
 		else
 		{
@@ -305,7 +336,7 @@ public class Painter extends JPanel{
 
 		if (y2 != y1) {
 			dx12 = x2 - x1;
-			dx12 /= ((y2 - y1)+0.5);
+			dx12 /= ((y2 - y1))+1;
 		}
 		else
 		{
@@ -314,7 +345,7 @@ public class Painter extends JPanel{
 
 		if (y3 != y2) {
 			dx23 = x3 - x2;
-			dx23 /= ((y3 - y2)+0.5);
+			dx23 /= ((y3 - y2))+1;
 		}
 		else
 		{
@@ -338,15 +369,21 @@ public class Painter extends JPanel{
 		Color right;
 		Color act;
 		Color D = ColorIntr(top.getColor(),bot.getColor(), y3-y1, y2 -y1);
-		double i = y1;
+		int i = y1;
 		while ( i <= y2){
-			left = ColorIntr(top.getColor(), D, y2-y1, i-y1);
-			right = ColorIntr(top.getColor(), mid.getColor(), y2-y1, i-y1);
+			if(x2>(x1+x3)/2){
+				left = ColorIntr(top.getColor(), D, y2-y1, i-y1);
+				right = ColorIntr(top.getColor(), mid.getColor(), y2-y1, i-y1);
+			}
+			else{
+				right = ColorIntr(top.getColor(), D, y2-y1, i-y1);
+				left = ColorIntr(top.getColor(), mid.getColor(), y2-y1, i-y1);
+			}
 			double j = wx1;
 			while ( j <=wx2){
 				act = ColorIntr(left, right, wx2-wx1, j-wx1);
 				g.setColor(act);
-				g.drawRect((int)j, (int)i, 1, 1);
+				g.drawRect((int)Math.ceil(j), i, 1, 1);
 				j++;
 			}
 			wx1 += dx13;
@@ -367,13 +404,19 @@ public class Painter extends JPanel{
 		
 		i = y2;
 		while ( i <= y3){
-			left = ColorIntr(D, bot.getColor(), y3-y2, i-y2);
-			right = ColorIntr(mid.getColor(), bot.getColor(), y3-y2, i-y2);
+			if(x2>(x1+x3)/2){
+				left = ColorIntr(D, bot.getColor(), y3-y2, i-y2);
+				right = ColorIntr(mid.getColor(), bot.getColor(), y3-y2, i-y2);
+			}
+			else{
+				right = ColorIntr(D, bot.getColor(), y3-y2, i-y2);
+				left = ColorIntr(mid.getColor(), bot.getColor(), y3-y2, i-y2);
+			}
 			double j = wx1;
 			while ( j <= wx2){
 				act = ColorIntr(left, right, wx2-wx1, j-wx1);
 				g.setColor(act);
-				g.drawRect((int)j, (int)i, 1, 1);
+				g.drawRect((int)Math.ceil(j), i, 1, 1);
 				j++;
 			}
 			wx1 += _dx13;
@@ -458,10 +501,6 @@ public class Painter extends JPanel{
 			dx23 = 0;
 		}
 
-		double wx1 = x1;
-		double wx2 = wx1;
-		
-		double _dx13 = dx13;
 
 		if (dx13 > dx12)
 		{
@@ -470,11 +509,7 @@ public class Painter extends JPanel{
 			dx13 = dx12;
 			dx12 = t;
 		}
-		
-		Color left;
-		Color right;
-		Color act;
-		Color D = ColorIntr(top.getColor(),bot.getColor(), y3-y1, y2 -y1);
+	
 		
 		
 		double sy;
