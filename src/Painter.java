@@ -85,7 +85,7 @@ public class Painter extends JPanel{
 		}
 		
 	    for (int i = 0;i<spotLights.size();i++){
-	    	DrawDot(graphic, spotLights.get(i).getCoordinates2D());
+	    	DrawDot(graphic, spotLights.get(i));
 	    }
 		
 	}
@@ -128,9 +128,10 @@ public class Painter extends JPanel{
 		this.mode = mode;
 	}
 	
-	private void DrawDot(Graphics g, Point2D point){
-		g.setColor(point.getColor());
-		g.fillRect((int)(point.getX()+move),(int)(point.getY()+move), 4, 4);
+	private void DrawDot(Graphics g, SpotLight point){
+		g.setColor(point.getCoordinates2D().getColor());
+		g.fillRect((int)(point.getCoordinates2D().getX()+move),(int)(point.getCoordinates2D().getY()+move), 4, 4);
+		g.drawString(String.valueOf((int)(point.getViewCoordinates().getX()+move))+" : "+String.valueOf((int)(point.getViewCoordinates().getY()+move))+" : "+String.valueOf((int)(point.getViewCoordinates().getZ()+move)), (int)(point.getCoordinates2D().getX()+move),(int)(point.getCoordinates2D().getY()+move));
 	}
 
 	void drawTriangle(Graphics g, int x1, int y1, int x2, int y2, int x3, int y3,
@@ -534,16 +535,27 @@ public class Painter extends JPanel{
 	}
 	
 	Color ColorIntr (Color col1, Color col2, double length, double position){
+		
+		
+		
 		double mul1 = (length-position)/length;
 		double mul2 = (position)/length;
+		
+		
+		
 		if (mul1<0 || mul2<0)
 			System.out.println("Mul< 0");
 		int r = (int) ((mul1)*col1.getRed()+mul2*col2.getRed());
 		int g = (int) ((mul1)*col1.getGreen()+mul2*col2.getGreen());
 		int b = (int) ((mul1)*col1.getBlue()+mul2*col2.getBlue());
-		
 		return new Color(r, g, b);
-		
+	}
+	
+	
+	Color RGB2HSB(Color rgb){
+		float color[] = new float[5];
+		Color.RGBtoHSB(rgb.getRed(), rgb.getGreen(), rgb.getBlue(), color);
+		return new Color(color[0],color[1],color[2]);
 	}
 
 }

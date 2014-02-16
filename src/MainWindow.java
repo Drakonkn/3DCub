@@ -40,9 +40,9 @@ public class MainWindow extends JFrame implements ActionListener {
 	public MainWindow(){
 		super();
 		spotLight = new Vector<SpotLight>();
-		spotLight.add(new SpotLight(new Color(0xFF0000),new Point3D(13, 13, 13)));
-		spotLight.add(new SpotLight(new Color(0x00FF00),new Point3D(-13, 13, 13)));
-		spotLight.add(new SpotLight(new Color(0x0000FF),new Point3D(-13,-13,-13)));
+		spotLight.add(new SpotLight(new Color(0xFF0000),new Point3D(30, 30, 30)));
+		//spotLight.add(new SpotLight(new Color(0x00FF00),new Point3D(-13, 13, 13)));
+		//spotLight.add(new SpotLight(new Color(0x0000FF),new Point3D(-13,-13,-13)));
 		origin = new Model();
 		model3D = new Model();
 		painter = new Painter();
@@ -185,14 +185,38 @@ public class MainWindow extends JFrame implements ActionListener {
 			for (int i = 0; i<spotLight.size();i++){
 				s = spotLight.get(i);	
 				double cosA = s.getCos(xN,yN,zN,xA,yA,zA);
-				double cosB = calcCos(xN,yN,zN,xA,yA,zA);
+				double cosB = 1;// calcCos(xN,yN,zN,xA,yA,zA);
 				double mulA = cosA*s.power*cosB;
-				r += (s.getR()* mulA)<10?10:(int) (s.getR()* mulA);
-				g += (s.getG()* mulA)<10?10:(int) (s.getG()* mulA);
-				b += (s.getB()* mulA)<10?10:(int) (s.getB()* mulA);
+				r += (int) (s.getR()* mulA);
+				g += (int) (s.getG()* mulA);
+				b += (int) (s.getB()* mulA);
 			}
-			return new Color(r>255?255:r,g>255?255:g,b>255?255:b);
+			int lightCount = spotLight.size();
+			return new Color((int)(r/lightCount),(int)(g/lightCount),(int)(b/lightCount));
 	  }
+	  
+		double calcCos(double Nx, double Ny, double Nz, double x, double y, double z){
+			double Ex = q * Math.sin(Math.toRadians(-f))*Math.cos(Math.toRadians(-a));
+			double Ey = q * Math.sin(Math.toRadians(-f))*Math.sin(Math.toRadians(-a));
+			double Ez = q * Math.cos(Math.toRadians(-f));
+			
+
+			
+			double X = Ex -x;
+			double Y = Ey -y;
+			double Z = Ez -z;
+			
+			double length = Math.sqrt(X*X + Y*Y + Z*Z);
+			
+			X /= length;
+			Y /= length;
+			Z /= length;
+			
+			double mul = (x*X) + (y*Y) + (z*Z);
+			double length1 = Math.sqrt(X*X+Y*Y+Z*Z);
+			double length2 = Math.sqrt(x*x+y*y+z*z);
+			return Math.abs(mul/(length1*length2));
+		}
 		
 	  public static double[][] product(double[][] first, double[][] second, int row1, int col1,
 				int row2, int col2) {
@@ -290,30 +314,5 @@ public class MainWindow extends JFrame implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			rep();
-			
-		}
-		
-		double calcCos(double Nx, double Ny, double Nz, double x, double y, double z){
-			double Ex = q * Math.sin(Math.toRadians(f))*Math.cos(Math.toRadians(a));
-			double Ey = q * Math.sin(Math.toRadians(f))*Math.sin(Math.toRadians(a));
-			double Ez = q * Math.cos(Math.toRadians(f));
-			
-
-			
-			double X = Ex -x;
-			double Y = Ey -y;
-			double Z = Ez -z;
-			
-			double length = Math.sqrt(X*X + Y*Y + Z*Z);
-			
-			X /= length;
-			Y /= length;
-			Z /= length;
-			
-			double mul = (x*X) + (y*Y) + (z*Z);
-			double length1 = Math.sqrt(X*X+Y*Y+Z*Z);
-			double length2 = Math.sqrt(x*x+y*y+z*z);
-			return Math.abs(mul/(length1*length2));
-			
 		}
 }
