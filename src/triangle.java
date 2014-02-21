@@ -1,9 +1,9 @@
 import java.awt.Color;
 
 
-    class triangle
+    class Triangle
 	{
-    	public triangle(Point3D A,Point3D B,Point3D C){
+    	public Triangle(Point3D A,Point3D B,Point3D C){
     		this.A = A;
     		this.B = B;
     		this.C = C;

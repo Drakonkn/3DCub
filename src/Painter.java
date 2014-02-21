@@ -19,7 +19,7 @@ public class Painter extends JPanel{
 	private static final long serialVersionUID = 1L;
 	private Model model;
 	final double resize = 1;
-	final int move = -150;
+	final int move = -800;
 	static final int simpleMode = 0;
 	static final int fong = 1;
 	int mode = simpleMode;
@@ -70,7 +70,7 @@ public class Painter extends JPanel{
 	    super.paintComponent(graphic);
 
 
-		Vector<triangle> vector =  model.getVector();
+		Vector<Triangle> vector =  model.getVector();
 		Collections.sort(vector, new ZCompporator());
 		switch (mode) {
 		case simpleMode:
@@ -91,7 +91,7 @@ public class Painter extends JPanel{
 	}
 	
 	private void fong(Graphics graphic) {
-		Vector<triangle> vector =  model.getVector();
+		Vector<Triangle> vector =  model.getVector();
 		for (int i = 0; i<vector.size();i++) {
 			int r,g,b;
 			
@@ -105,7 +105,7 @@ public class Painter extends JPanel{
 	}
 	
 	private void simpleFill(Graphics graphic){
-		Vector<triangle> vector =  model.getVector();
+		Vector<Triangle> vector =  model.getVector();
 		for (int i = 0; i<vector.size();i++) {
 			int[] x = {(int)(vector.get(i).A2.getX()*resize+move),
 					(int)(vector.get(i).B2.getX()*resize+move),

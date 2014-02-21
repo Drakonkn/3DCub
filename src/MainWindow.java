@@ -32,7 +32,7 @@ public class MainWindow extends JFrame implements ActionListener {
 	 */
 	private static final long serialVersionUID = 1L;
 	private Painter painter;
-	private Model model3D;
+	private Model viewModel;
 	Vector<SpotLight> spotLight;
 
 	private Model origin;
@@ -44,9 +44,9 @@ public class MainWindow extends JFrame implements ActionListener {
 		//spotLight.add(new SpotLight(new Color(0x00FF00),new Point3D(-13, 13, 13)));
 		//spotLight.add(new SpotLight(new Color(0x0000FF),new Point3D(-13,-13,-13)));
 		origin = new Model();
-		model3D = new Model();
+		viewModel = new Model();
 		painter = new Painter();
-		painter.setModel(model3D);
+		painter.setModel(viewModel);
 		painter.setSpotLight(spotLight);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
@@ -74,7 +74,6 @@ public class MainWindow extends JFrame implements ActionListener {
 				
 			}
 		});
-		
 		addMouseMotionListener(new MouseMotionAdapter() {
 			public void mouseDragged(MouseEvent e) {
 				super.mouseDragged(e);
@@ -85,7 +84,6 @@ public class MainWindow extends JFrame implements ActionListener {
 				lastMousePosY = e.getY();
 			}
 		});
-		
 		addMouseListener(new MouseAdapter() {
 			public void mousePressed(MouseEvent e) {
 				super.mousePressed(e);
@@ -93,25 +91,20 @@ public class MainWindow extends JFrame implements ActionListener {
 				lastMousePosY = e.getY();
 			}
 		});
-		
 		addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent arg0) {
 				int code = arg0.getKeyCode();
 				switch (code){
-					case 37: xPosition--; rep();break;
-					case 38: yPosition--; rep();break;
-					case 39: xPosition++; rep();break;
-					case 40: yPosition++; rep();break;
+					case KeyEvent.VK_LEFT: spotLight.get(0).rotate(); xPosition--; rep();break;
+					case KeyEvent.VK_UP: yPosition--; rep();break;
+					case KeyEvent.VK_RIGHT: xPosition++; rep();break;
+					case KeyEvent.VK_DOWN: yPosition++; rep();break;
 				}
-				
 			}
 		});
-	
 		rep();
-		
 		javax.swing.Timer timer  = new javax.swing.Timer(100,this);
 		timer.start();
-		
 	}
 	
 	private void rep(){
@@ -128,50 +121,36 @@ public class MainWindow extends JFrame implements ActionListener {
 		  }
 		
 	  private void getView(){			
-			Vector<triangle> vector = model3D.getVector();
+			Vector<Triangle> vector = viewModel.getVector();
 			for (int i = 0; i< vector.size();i++) {
-				triangle tr = origin.getVector().get(i);
-				triangle tr2 = vector.get(i);
+				Triangle origTriangle =     origin.getVector().get(i);
+				Triangle viewTriangle = viewModel.getVector().get(i);
 				
-				vector.get(i).A = pointToView(tr.A);
-				vector.get(i).B = pointToView(tr.B);
-				vector.get(i).C = pointToView(tr.C);
+				vector.get(i).A = pointToView(origTriangle.A);
+				vector.get(i).B = pointToView(origTriangle.B);
+				vector.get(i).C = pointToView(origTriangle.C);
 				
 				for (int k =0; k<spotLight.size();k++){
 					spotLight.get(k).setViewCoordinates(pointToView(spotLight.get(k).getCoordinates()));
 				}
 				
 				
-				double xA,xB,xC,yA,yB,yC,zA,zB,zC, xN, yN,zN;
-				xA = tr2.A.getX();
-				xB = tr2.B.getX();
-				xC = tr2.C.getX();
-				yA = tr2.A.getY();
-				yB = tr2.B.getY();
-				yC = tr2.C.getY();
-				zA = tr2.A.getZ();
-				zB = tr2.B.getZ();
-				zC = tr2.C.getZ();
+				double xN, yN,zN;
 				
 				
-
-				xN = (yB-yA)*(zC-zA)-(yC-yA)*(zB-zA);
-				yN = (xB-xA)*(zC-zA)-(xC-xA)*(zB-zA);
-				zN = (xB-xA)*(yC-yA)-(xC-xA)*(yB-yA);
+				Point3D p = Point3D.sub(viewTriangle.B, viewTriangle.A);
+				Point3D q = Point3D.sub(viewTriangle.C, viewTriangle.A);
+				Point3D n = Point3D.normalize(Point3D.cross(p, q));
 				
-				double lengthN = Math.sqrt(xN*xN+yN*yN+zN*zN);
+				xN = n.getX();
+				yN = n.getY();
+				zN = n.getZ();
 				
-				xN /= lengthN;
-				yN /= lengthN;
-				zN /= lengthN;
-				
-				tr2.A.color = calcColor(tr2.A, xN, yN, zN);
-				tr2.B.color = calcColor(tr2.B, xN, yN, zN);
-				tr2.C.color = calcColor(tr2.C, xN, yN, zN);
+				viewTriangle.A.color = calcColor(origTriangle.A, xN, yN, zN);
+				viewTriangle.B.color = calcColor(origTriangle.B, xN, yN, zN);
+				viewTriangle.C.color = calcColor(origTriangle.C, xN, yN, zN);
 			}
-			
 			return ;
-			
 		}
 	  
 	  private Color calcColor(Point3D A,double xN,double yN,double zN){
@@ -239,14 +218,14 @@ public class MainWindow extends JFrame implements ActionListener {
 				spotLight.get(k).coordinates2D = pointTo2D(spotLight.get(k).getViewCoordinates());
 			}
 			
-			Vector<triangle> vector= model3D.getVector();
+			Vector<Triangle> vector= viewModel.getVector();
 			for ( int i =0; i<vector.size();i++) {
-				model3D.getVector().get(i).A2 = pointTo2D(model3D.getVector().get(i).A);
-				model3D.getVector().get(i).B2 = pointTo2D(model3D.getVector().get(i).B);
-				model3D.getVector().get(i).C2 = pointTo2D(model3D.getVector().get(i).C);
+				viewModel.getVector().get(i).A2 = pointTo2D(viewModel.getVector().get(i).A);
+				viewModel.getVector().get(i).B2 = pointTo2D(viewModel.getVector().get(i).B);
+				viewModel.getVector().get(i).C2 = pointTo2D(viewModel.getVector().get(i).C);
 				
-				vector.get(i).z = (model3D.getVector().get(i).A.getZ() + model3D.getVector().get(i).B.getZ()
-						+ model3D.getVector().get(i).C.getZ())/3;
+				vector.get(i).z = (viewModel.getVector().get(i).A.getZ() + viewModel.getVector().get(i).B.getZ()
+						+ viewModel.getVector().get(i).C.getZ())/3;
 				
 			}
 			
@@ -281,9 +260,9 @@ public class MainWindow extends JFrame implements ActionListener {
 		}
 		
 		private Point2D pointTo2D(Point3D point){
-			double screenDist = 8;
-			double C1 = 50;
-			double C2 = 50;
+			double screenDist = 11;
+			double C1 = 100;
+			double C2 = 100;
 			int x = (int)(screenDist * (point.getX()/ point.getZ() + C1));
 			int y = (int)(screenDist * (point.getY()/ point.getZ() + C2));
 			return new Point2D(x,y,point.color);

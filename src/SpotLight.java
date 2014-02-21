@@ -59,7 +59,7 @@ public class SpotLight implements ActionListener {
 	}
 
 	
-	private void  rotate(){
+	public void  rotate(){
 		f+=Math.toRadians(5);
 		a+=Math.toRadians(5);
 		coordinates.setX(rr*Math.sin(f)*Math.cos(a));
@@ -80,9 +80,9 @@ public class SpotLight implements ActionListener {
 	}
 
 	public double getCos(double x2, double y2, double z2,double x,double y, double z) {
-		double X = viewCoordinates.getX() -x;
-		double Y = viewCoordinates.getY() -y;
-		double Z = viewCoordinates.getZ() -z;
+		double X = getCoordinates().getX() -x;
+		double Y = getCoordinates().getY() -y;
+		double Z = getCoordinates().getZ() -z;
 		double mul = (x2*X) + (y2*Y) + (z2*Z);
 		double length1 = Math.sqrt(X*X+Y*Y+Z*Z);
 		double length2 = Math.sqrt(x2*x2+y2*y2+z2*z2);
