@@ -43,23 +43,23 @@ public class Model {
 //		N = new Point3D(-2,  0,  0);
 		
 		
-		vector.add(new Triangle(A,D,E));
+		vector.add(new Triangle(E,D,A));
 		vector.add(new Triangle(H,D,E));
 		
-		vector.add(new Triangle(D,C,H));
+		vector.add(new Triangle(H,C,D));
 		vector.add(new Triangle(G,C,H));
 		
 		vector.add(new Triangle(C,G,B));
-		vector.add(new Triangle(F,G,B));
+		vector.add(new Triangle(B,G,F));
 		
 		vector.add(new Triangle(B,F,A));
-		vector.add(new Triangle(E,F,A));
+		vector.add(new Triangle(A,F,E));
 		
 		vector.add(new Triangle(A,D,B));
-		vector.add(new Triangle(C,D,B));
+		vector.add(new Triangle(B,D,C));
 		
 		vector.add(new Triangle(F,G,E));
-		vector.add(new Triangle(H,G,E));
+		vector.add(new Triangle(E,G,H));
 		
 		
 //		vector.add(new triangle(A,B,I));

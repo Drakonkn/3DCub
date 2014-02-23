@@ -121,6 +121,11 @@ public class Painter extends JPanel{
 			
 			graphic.setColor(new Color(r,g,b));
 			graphic.fillPolygon(x, y, 3);
+			
+//			DrawDot(graphic, vector.get(i).A2);
+//			DrawDot(graphic, vector.get(i).B2);
+//			DrawDot(graphic, vector.get(i).C2);
+			DrawDot(graphic, vector.get(i).norm2D);
 		}
 	}
 
@@ -132,6 +137,11 @@ public class Painter extends JPanel{
 		g.setColor(point.getCoordinates2D().getColor());
 		g.fillRect((int)(point.getCoordinates2D().getX()+move),(int)(point.getCoordinates2D().getY()+move), 4, 4);
 		g.drawString(String.valueOf((int)(point.getViewCoordinates().getX()+move))+" : "+String.valueOf((int)(point.getViewCoordinates().getY()+move))+" : "+String.valueOf((int)(point.getViewCoordinates().getZ()+move)), (int)(point.getCoordinates2D().getX()+move),(int)(point.getCoordinates2D().getY()+move));
+	}
+	
+	private void DrawDot(Graphics g, Point2D point){
+		g.fillRect((int)(point.getX()+move),(int)(point.getY()+move), 4, 4);
+		//g.drawString(String.valueOf((int)(point.getX()+move))+" : "+String.valueOf((int)(point.getY()+move))+" : "+String.valueOf((int)(point.getZ()+move)), (int)(point.getX()+move),(int)(point.getY()+move));
 	}
 
 	void drawTriangle(Graphics g, int x1, int y1, int x2, int y2, int x3, int y3,

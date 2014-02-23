@@ -11,7 +11,7 @@ public class SpotLight implements ActionListener {
 	private Point3D viewCoordinates = new Point3D(0,0,0);
 	private Point3D coordinates = new Point3D(-3,-3,-3);
 
-	double power = 1;
+	double power = 3;
 	double a = Math.atan(coordinates.getY()/coordinates.getX());
 	double f = Math.atan(Math.sqrt(coordinates.getX()*coordinates.getX()+coordinates.getY()*coordinates.getY())/coordinates.getZ());
 	double rr = Math.sqrt(Math.pow(coordinates.getX(),2)+Math.pow(coordinates.getY(),2)+Math.pow(coordinates.getZ(),2));
@@ -49,24 +49,22 @@ public class SpotLight implements ActionListener {
 	public Point3D getCoordinates() {
 		return coordinates;
 	}
-
-	public void setCoordinates(Point3D coordinates) {
-		a = Math.atan(coordinates.getY()/coordinates.getX());
-		f = Math.atan(Math.sqrt(coordinates.getX()*coordinates.getX()+coordinates.getY()*coordinates.getY())/coordinates.getZ());
-		rr = Math.sqrt(Math.pow(coordinates.getX(),2)+Math.pow(coordinates.getY(),2)+Math.pow(coordinates.getZ(),2));
-		
-		this.coordinates = coordinates;
+	public void  rotateX(){
+		a+=Math.toRadians(1);
+		reCalcCoordinates();
+	}
+	
+	public void  rotateY(){
+		f-=Math.toRadians(1);
+		reCalcCoordinates();
 	}
 
-	
-	public void  rotate(){
-		f+=Math.toRadians(5);
-		a+=Math.toRadians(5);
+	private void reCalcCoordinates(){
 		coordinates.setX(rr*Math.sin(f)*Math.cos(a));
 		coordinates.setY(rr*Math.sin(f)*Math.sin(a));
 		coordinates.setZ(rr*Math.cos(f));
 	}
-
+	
 	public int getR() {
 		return r;
 	}
@@ -86,7 +84,8 @@ public class SpotLight implements ActionListener {
 		double mul = (x2*X) + (y2*Y) + (z2*Z);
 		double length1 = Math.sqrt(X*X+Y*Y+Z*Z);
 		double length2 = Math.sqrt(x2*x2+y2*y2+z2*z2);
-		return Math.abs(mul/(length1*length2));
+		double cos = mul/(length1*length2);
+		return cos<0?0:cos;
 	}
 
 	@Override
