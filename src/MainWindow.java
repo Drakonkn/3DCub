@@ -264,8 +264,8 @@ public class MainWindow extends JFrame implements ActionListener {
 			double V[][] = 
 				{
 					{-sinf,-cosa*cosf,-sina*cosf,0},
-					{cosf ,-cosa*sinf,-sina*sinf,0},
-					{0    ,sina      ,-cosa     ,0},
+					{cosf ,-cosa*sinf,-sina*cosf,0},
+					{0    ,sina      ,-cosf     ,0},
 					{0    ,0         ,q         ,1}
 				};
 			
