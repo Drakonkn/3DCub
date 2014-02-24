@@ -11,19 +11,19 @@ public class Model {
 	private Point3D G;
 	private Point3D H;
 	
-	private Point3D I;
-	private Point3D J;
-	private Point3D K;
-	private Point3D L;
-	private Point3D M;
-	private Point3D N;
+//	private Point3D I;
+//	private Point3D J;
+//	private Point3D K;
+//	private Point3D L;
+//	private Point3D M;
+//	private Point3D N;
 	
 	
-	private Vector<triangle> vector;
+	private Vector<Triangle> vector;
 	
 	public Model(){
 
-		vector = new Vector<triangle>();
+		vector = new Vector<Triangle>();
 		
 		E = new Point3D( 20, -20, -20);
 		F = new Point3D(-20, -20, -20);
@@ -35,31 +35,31 @@ public class Model {
 		G = new Point3D(-20,  20, -20);
 		
 		
-		I = new Point3D( 0,  0,  2);
-		J = new Point3D( 0,  0, -2);
-		K = new Point3D( 0, -2,  0);
-		L = new Point3D( 0,  2,  0);
-		M = new Point3D( 2,  0,  0);
-		N = new Point3D(-2,  0,  0);
+//		I = new Point3D( 0,  0,  2);
+//		J = new Point3D( 0,  0, -2);
+//		K = new Point3D( 0, -2,  0);
+//		L = new Point3D( 0,  2,  0);
+//		M = new Point3D( 2,  0,  0);
+//		N = new Point3D(-2,  0,  0);
 		
 		
-		vector.add(new triangle(A,D,E));
-		vector.add(new triangle(H,D,E));
+		vector.add(new Triangle(E,D,A));
+		vector.add(new Triangle(H,D,E));
 		
-		vector.add(new triangle(D,C,H));
-		vector.add(new triangle(G,C,H));
+		vector.add(new Triangle(H,C,D));
+		vector.add(new Triangle(G,C,H));
 		
-		vector.add(new triangle(C,G,B));
-		vector.add(new triangle(F,G,B));
+		vector.add(new Triangle(C,G,B));
+		vector.add(new Triangle(B,G,F));
 		
-		vector.add(new triangle(B,F,A));
-		vector.add(new triangle(E,F,A));
+		vector.add(new Triangle(B,F,A));
+		vector.add(new Triangle(A,F,E));
 		
-		vector.add(new triangle(A,D,B));
-		vector.add(new triangle(C,D,B));
+		vector.add(new Triangle(A,D,B));
+		vector.add(new Triangle(B,D,C));
 		
-		vector.add(new triangle(F,G,E));
-		vector.add(new triangle(H,G,E));
+		vector.add(new Triangle(F,G,E));
+		vector.add(new Triangle(E,G,H));
 		
 		
 //		vector.add(new triangle(A,B,I));
@@ -98,12 +98,12 @@ public class Model {
 	}
 	
 	
-	public Vector<triangle> getVector() {
+	public Vector<Triangle> getVector() {
 		return vector;
 	}
 
 
-	public void setVector(Vector<triangle> vector) {
+	public void setVector(Vector<Triangle> vector) {
 		this.vector = vector;
 	}
 
