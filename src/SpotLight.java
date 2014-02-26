@@ -11,7 +11,7 @@ public class SpotLight implements ActionListener {
 	private Point3D viewCoordinates = new Point3D(0,0,0);
 	private Point3D coordinates = new Point3D(-3,-3,-3);
 
-	double power = 3;
+	double power = 1;
 	double a = Math.atan(coordinates.getY()/coordinates.getX());
 	double f = Math.atan(Math.sqrt(coordinates.getX()*coordinates.getX()+coordinates.getY()*coordinates.getY())/coordinates.getZ());
 	double rr = Math.sqrt(Math.pow(coordinates.getX(),2)+Math.pow(coordinates.getY(),2)+Math.pow(coordinates.getZ(),2));
@@ -49,13 +49,23 @@ public class SpotLight implements ActionListener {
 	public Point3D getCoordinates() {
 		return coordinates;
 	}
-	public void  rotateX(){
+	public void  rotateRight(){
 		a+=Math.toRadians(1);
 		reCalcCoordinates();
 	}
 	
-	public void  rotateY(){
+	public void  rotateLeft(){
+		a-=Math.toRadians(1);
+		reCalcCoordinates();
+	}
+	
+	public void  rotateTop(){
 		f-=Math.toRadians(1);
+		reCalcCoordinates();
+	}
+	
+	public void  rotateBot(){
+		f+=Math.toRadians(1);
 		reCalcCoordinates();
 	}
 
@@ -88,10 +98,9 @@ public class SpotLight implements ActionListener {
 		return cos<0?0:cos;
 	}
 
-	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-		//rotate();
+//		rotateX();
+//		rotateY();
 	}
 	
 }

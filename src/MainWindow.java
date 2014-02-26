@@ -10,6 +10,7 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.Vector;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
@@ -19,6 +20,7 @@ public class MainWindow extends JFrame implements ActionListener {
 	double q = 100;
 	double f = 45;
 	double a = 45;
+	int activSpot = 0;
 	
 	double scale = 20;
 	double xPosition = -500;
@@ -39,13 +41,42 @@ public class MainWindow extends JFrame implements ActionListener {
 	public MainWindow(){
 		super();
 		spotLight = new Vector<SpotLight>();
-		spotLight.add(new SpotLight(new Color(0xFF0000),new Point3D(25, -25, -25)));
+		spotLight.add(new SpotLight(new Color(0xFF0000),new Point3D(25, -25,  25)));
 		spotLight.add(new SpotLight(new Color(0x00FF00),new Point3D(25, -25,  25)));
 		spotLight.add(new SpotLight(new Color(0x0000FF),new Point3D(25,  25,  25)));
 		origin = new Model();
 		painter = new Painter();
 		painter.setModel(origin);
 		painter.setSpotLight(spotLight);
+		JButton red = new JButton("Red");
+		JButton gre = new JButton("Green");
+		JButton blu = new JButton("Blue");
+		red.setFocusable(false);
+		gre.setFocusable(false);
+		blu.setFocusable(false);
+		
+		red.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				activSpot = 0;				
+			}
+		});
+		gre.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				activSpot = 1;
+			}
+		});
+		blu.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				activSpot = 2;
+				
+			}
+		});
+		
+		
+		painter.add(red);
+		painter.add(gre);
+		painter.add(blu);
+		
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
 		setSize(500, 500);
@@ -94,10 +125,10 @@ public class MainWindow extends JFrame implements ActionListener {
 			public void keyPressed(KeyEvent arg0) {
 				int code = arg0.getKeyCode();
 				switch (code){
-					case KeyEvent.VK_LEFT: spotLight.get(0).rotateX(); rep();break;
-					case KeyEvent.VK_UP: spotLight.get(0).rotateY(); rep();break;
-					case KeyEvent.VK_RIGHT:  rep();break;
-					case KeyEvent.VK_DOWN: rep();break;
+					case KeyEvent.VK_LEFT: spotLight.get(activSpot).rotateLeft(); rep();break;
+					case KeyEvent.VK_UP: spotLight.get(activSpot).rotateTop(); rep();break;
+					case KeyEvent.VK_RIGHT: spotLight.get(activSpot).rotateRight(); rep();break;
+					case KeyEvent.VK_DOWN: spotLight.get(activSpot).rotateBot(); rep();break;
 				}
 			}
 		});
@@ -132,7 +163,6 @@ public class MainWindow extends JFrame implements ActionListener {
 				for (int k =0; k<spotLight.size();k++){
 					spotLight.get(k).setViewCoordinates(pointToView(spotLight.get(k).getCoordinates()));
 				}
-				
 				
 				double xN, yN,zN;
 				
@@ -171,8 +201,8 @@ public class MainWindow extends JFrame implements ActionListener {
 				double cosA = s.getCos(xN,yN,zN,xA,yA,zA);
 				double cosB = 1;
 				double dist = Point3D.calcDist(s.getCoordinates(), A);
-				//if (dist > 30) dist = 400; else dist = 1;
-				double mulA = (cosA*s.power*cosB);///dist;
+				dist /= 30;
+				double mulA = (cosA*s.power*cosB)/dist;
 				r += (int) (s.getR()* mulA);
 				g += (int) (s.getG()* mulA);
 				b += (int) (s.getB()* mulA);
@@ -183,9 +213,9 @@ public class MainWindow extends JFrame implements ActionListener {
 			if (g>255)g=255;
 			if (b>255)b=255;
 			
-			if (r<10)r=10;
-			if (g<10)g=10;
-			if (b<10)b=10;
+			if (r<30)r=30;
+			if (g<30)g=30;
+			if (b<30)b=30;
 			return new Color((int)(r/lightCount),(int)(g/lightCount),(int)(b/lightCount));
 	  }
 	  
