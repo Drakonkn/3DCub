@@ -35,6 +35,8 @@ public class Painter extends JPanel{
 		public Painter() {
 		JButton simple = new JButton("Simple");
 		JButton fong   = new JButton("Fong");
+		simple.setFocusable(false);
+		fong.setFocusable(false);
 		
 		simple.addActionListener(new ActionListener() {
 			
@@ -122,10 +124,10 @@ public class Painter extends JPanel{
 			graphic.setColor(new Color(r,g,b));
 			graphic.fillPolygon(x, y, 3);
 			
-//			DrawDot(graphic, vector.get(i).A2);
-//			DrawDot(graphic, vector.get(i).B2);
-//			DrawDot(graphic, vector.get(i).C2);
-			DrawDot(graphic, vector.get(i).norm2D);
+			DrawDot(graphic, vector.get(i).A2);
+			DrawDot(graphic, vector.get(i).B2);
+			DrawDot(graphic, vector.get(i).C2);
+//			DrawDot(graphic, vector.get(i).norm2D);
 		}
 	}
 
@@ -480,10 +482,8 @@ public class Painter extends JPanel{
 		double x3 = bot.getX();
 		double y3 = bot.getY();
 		
-		//String str = new String("x1 = "+x1+" y1 = "+y1+" x2 = "+x2+" y2= "+y2+" x3 = "+x3+" y3 = "+y3);
-		//System.err.println(str);
 		
-		
+		@SuppressWarnings("unused")
 		double dx13 = 0, dx12 = 0, dx23 = 0;
 		if (y3 != y1) {
 			dx13 = x3 - x1;
