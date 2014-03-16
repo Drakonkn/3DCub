@@ -41,9 +41,9 @@ public class MainWindow extends JFrame implements ActionListener {
 	public MainWindow(){
 		super();
 		spotLight = new Vector<SpotLight>();
-		spotLight.add(new SpotLight(new Color(0xFF0000),new Point3D(25, -25,  25)));
-		spotLight.add(new SpotLight(new Color(0x00FF00),new Point3D(25, -25,  25)));
-		spotLight.add(new SpotLight(new Color(0x0000FF),new Point3D(25,  25,  25)));
+		spotLight.add(new SpotLight(new Color(0xFF0000),new Point(25, -25,  25)));
+		spotLight.add(new SpotLight(new Color(0x00FF00),new Point(25, -25,  25)));
+		spotLight.add(new SpotLight(new Color(0x0000FF),new Point(25,  25,  25)));
 		origin = new Model();
 		painter = new Painter();
 		painter.setModel(origin);
@@ -120,7 +120,6 @@ public class MainWindow extends JFrame implements ActionListener {
 				lastMousePosY = e.getY();
 			}
 		});
-		
 		addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent arg0) {
 				int code = arg0.getKeyCode();
@@ -156,39 +155,27 @@ public class MainWindow extends JFrame implements ActionListener {
 			for (int i = 0; i< vector.size();i++) {
 				Triangle origTriangle =     origin.getVector().get(i);
 				
-				vector.get(i).AV = pointToView(origTriangle.A);
-				vector.get(i).BV = pointToView(origTriangle.B);
-				vector.get(i).CV = pointToView(origTriangle.C);
+				origTriangle.A.setView(pointToView(origTriangle.A));
+				origTriangle.B.setView(pointToView(origTriangle.B));
+				origTriangle.C.setView(pointToView(origTriangle.C));
 				
 				for (int k =0; k<spotLight.size();k++){
-					spotLight.get(k).setViewCoordinates(pointToView(spotLight.get(k).getCoordinates()));
+					spotLight.get(k).getCoordinates().setView(pointToView(spotLight.get(k).getCoordinates()));
 				}
 				
-				double xN, yN,zN;
+				origTriangle.norm.setView(pointToView(origTriangle.norm));
+				double xN = origTriangle.norm.getX();
+				double yN = origTriangle.norm.getY();
+				double zN = origTriangle.norm.getZ();
 				
-				
-				Point3D p = Point3D.sub(origTriangle.BV, origTriangle.AV);
-				Point3D q = Point3D.sub(origTriangle.CV, origTriangle.AV);
-				Point3D n = Point3D.normalize(Point3D.cross(p, q));
-				
-				p = Point3D.sub(origTriangle.B, origTriangle.A);
-				q = Point3D.sub(origTriangle.C, origTriangle.A);
-				n = Point3D.normalize(Point3D.cross(p, q));
-				
-				origTriangle.norm = n;
-				origTriangle.normV = pointToView(origTriangle.norm);
-				xN = n.getX();
-				yN = n.getY();
-				zN = n.getZ();
-				
-				origTriangle.AV.color = calcColor(origTriangle.A, xN, yN, zN);
-				origTriangle.BV.color = calcColor(origTriangle.B, xN, yN, zN);
-				origTriangle.CV.color = calcColor(origTriangle.C, xN, yN, zN);
+				origTriangle.AColor = calcColor(origTriangle.A, xN, yN, zN);
+				origTriangle.BColor = calcColor(origTriangle.B, xN, yN, zN);
+				origTriangle.CColor = calcColor(origTriangle.C, xN, yN, zN);
 			}
 			return ;
 		}
 	  
-	  private Color calcColor(Point3D A,double xN,double yN,double zN){
+	  private Color calcColor(Point A,double xN,double yN,double zN){
 		  	double xA,yA,zA;
 			xA = A.getX();
 			yA = A.getY();
@@ -199,8 +186,9 @@ public class MainWindow extends JFrame implements ActionListener {
 			for (int i = 0; i<spotLight.size();i++){
 				s = spotLight.get(i);	
 				double cosA = s.getCos(xN,yN,zN,xA,yA,zA);
+				System.out.println(xN+" "+yN+" "+zN);
 				double cosB = 1;
-				double dist = Point3D.calcDist(s.getCoordinates(), A);
+				double dist = Point.calcDist(s.getCoordinates(), A);
 				dist /= 30;
 				double mulA = (cosA*s.power*cosB)/dist;
 				r += (int) (s.getR()* mulA);
@@ -213,9 +201,9 @@ public class MainWindow extends JFrame implements ActionListener {
 			if (g>255)g=255;
 			if (b>255)b=255;
 			
-			if (r<30)r=30;
-			if (g<30)g=30;
-			if (b<30)b=30;
+			if (r<20)r=20;
+			if (g<20)g=20;
+			if (b<20)b=20;
 			return new Color((int)(r/lightCount),(int)(g/lightCount),(int)(b/lightCount));
 	  }
 	  
@@ -237,25 +225,25 @@ public class MainWindow extends JFrame implements ActionListener {
 			getView();
 			
 			for (int k =0; k<spotLight.size();k++){
-				spotLight.get(k).coordinates2D = pointTo2D(spotLight.get(k).getViewCoordinates());
+				pointTo2D(spotLight.get(k).coordinates);
 			}
 			
 			Vector<Triangle> vector= origin.getVector();
 			for ( int i =0; i<vector.size();i++) {
-				origin.getVector().get(i).A2 = pointTo2D(origin.getVector().get(i).AV);
-				origin.getVector().get(i).B2 = pointTo2D(origin.getVector().get(i).BV);
-				origin.getVector().get(i).C2 = pointTo2D(origin.getVector().get(i).CV);
-				origin.getVector().get(i).norm2D = pointTo2D(origin.getVector().get(i).normV);
+				pointTo2D(origin.getVector().get(i).A);
+				pointTo2D(origin.getVector().get(i).B);
+				pointTo2D(origin.getVector().get(i).C);
+				pointTo2D(origin.getVector().get(i).norm);
 				
-				vector.get(i).z = (origin.getVector().get(i).AV.getZ() + origin.getVector().get(i).BV.getZ()
-						+ origin.getVector().get(i).CV.getZ())/3;
+				vector.get(i).z = (origin.getVector().get(i).A.getzV() + origin.getVector().get(i).B.getzV()
+						+ origin.getVector().get(i).C.getzV())/3;
 			}
 			
 			return;
 		}
 		
 		
-		private Point3D pointToView(Point3D point){
+		private Point pointToView(Point point){
 			double cosa = Math.cos(Math.toRadians(a));
 			double cosf = Math.cos(Math.toRadians(f));
 			
@@ -278,16 +266,20 @@ public class MainWindow extends JFrame implements ActionListener {
 					{xPosition,yPosition,0,0}
 				};
 			V = product(V, scale, 4, 4, 4, 4);
-			return new Point3D(product(point.getMatrix(), V, 1, 4, 4, 4));
+			
+			Point res = new Point(product(point.getMatrix(), V, 1, 4, 4, 4));
+			res.setNorm(point.getxN(), point.getyN(), point.getzN());
+			return res;
 		}
 		
-		private Point2D pointTo2D(Point3D point){
+		private void pointTo2D(Point point){
 			double screenDist = 11;
 			double C1 = 100;
 			double C2 = 100;
-			int x = (int)(screenDist * (point.getX()/ point.getZ() + C1));
-			int y = (int)(screenDist * (point.getY()/ point.getZ() + C2));
-			return new Point2D(x,y,point.color);
+			int x = (int)(screenDist * (point.getxV()/ point.getzV() + C1));
+			int y = (int)(screenDist * (point.getyV()/ point.getzV() + C2));
+			point.setX2D(x);
+			point.setY2D(y);
 		}
 		
 		double[][] extend(double[][] matrix) {

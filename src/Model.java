@@ -2,14 +2,14 @@ import java.util.Vector;
 
 public class Model {
 	
-	private Point3D A;
-	private Point3D B;
-	private Point3D C;
-	private Point3D D;
-	private Point3D E;
-	private Point3D F;
-	private Point3D G;
-	private Point3D H;
+	private Point A;
+	private Point B;
+	private Point C;
+	private Point D;
+	private Point E;
+	private Point F;
+	private Point G;
+	private Point H;
 	
 //	private Point3D I;
 //	private Point3D J;
@@ -25,14 +25,14 @@ public class Model {
 
 		vector = new Vector<Triangle>();
 		
-		E = new Point3D( 20, -20, -20);
-		F = new Point3D(-20, -20, -20);
-		B = new Point3D(-20, -20,  20);
-		A = new Point3D( 20, -20,  20);
-		D = new Point3D( 20,  20,  20);
-		H = new Point3D( 20,  20, -20);
-		C = new Point3D(-20,  20,  20);
-		G = new Point3D(-20,  20, -20);
+		E = new Point( 20, -20, -20);
+		F = new Point(-20, -20, -20);
+		B = new Point(-20, -20,  20);
+		A = new Point( 20, -20,  20);
+		D = new Point( 20,  20,  20);
+		H = new Point( 20,  20, -20);
+		C = new Point(-20,  20,  20);
+		G = new Point(-20,  20, -20);
 		
 		
 //		I = new Point3D( 0,  0,  2);
@@ -44,22 +44,22 @@ public class Model {
 		
 		
 		vector.add(new Triangle(E,D,A));
-//		vector.add(new Triangle(H,D,E));
-//		
-//		vector.add(new Triangle(H,C,D));
-//		vector.add(new Triangle(G,C,H));
-//		
-//		vector.add(new Triangle(C,G,B));
-//		vector.add(new Triangle(B,G,F));
-//		
-//		vector.add(new Triangle(B,F,A));
-//		vector.add(new Triangle(A,F,E));
-//		
-//		vector.add(new Triangle(A,D,B));
-//		vector.add(new Triangle(B,D,C));
-//		
-//		vector.add(new Triangle(F,G,E));
-//		vector.add(new Triangle(E,G,H));
+		vector.add(new Triangle(H,D,E));
+		
+		vector.add(new Triangle(H,C,D));
+		vector.add(new Triangle(G,C,H));
+		
+		vector.add(new Triangle(C,G,B));
+		vector.add(new Triangle(B,G,F));
+		
+		vector.add(new Triangle(B,F,A));
+		vector.add(new Triangle(A,F,E));
+		
+		vector.add(new Triangle(A,D,B));
+		vector.add(new Triangle(B,D,C));
+		
+		vector.add(new Triangle(F,G,E));
+		vector.add(new Triangle(E,G,H));
 		
 		
 //		vector.add(new triangle(A,B,I));
@@ -108,70 +108,70 @@ public class Model {
 	}
 
 
-	public Point3D getB() {
+	public Point getB() {
 		return B;
 	}
 
-	public void setB(Point3D b) {
+	public void setB(Point b) {
 		B = b;
 	}
 
-	public Point3D getC() {
+	public Point getC() {
 		return C;
 	}
 
-	public void setC(Point3D c) {
+	public void setC(Point c) {
 		C = c;
 	}
 
-	public void setA(Point3D a) {
+	public void setA(Point a) {
 		A = a;
 	}
 
 
 
 
-	public Point3D getA() {
+	public Point getA() {
 		return A;
 	}
 
-	public Point3D getD() {
+	public Point getD() {
 		return D;
 	}
 
-	public void setD(Point3D d) {
+	public void setD(Point d) {
 		D = d;
 	}
 
-	public Point3D getE() {
+	public Point getE() {
 		return E;
 	}
 
-	public void setE(Point3D e) {
+	public void setE(Point e) {
 		E = e;
 	}
 
-	public Point3D getF() {
+	public Point getF() {
 		return F;
 	}
 
-	public void setF(Point3D f) {
+	public void setF(Point f) {
 		F = f;
 	}
 
-	public Point3D getG() {
+	public Point getG() {
 		return G;
 	}
 
-	public void setG(Point3D g) {
+	public void setG(Point g) {
 		G = g;
 	}
 
-	public Point3D getH() {
+	public Point getH() {
 		return H;
 	}
 
-	public void setH(Point3D h) {
+	public void setH(Point h) {
 		H = h;
 	}
 	

@@ -3,27 +3,32 @@ import java.awt.Color;
 
     class Triangle
 	{
-    	public Triangle(Point3D A,Point3D B,Point3D C){
+    	Color color;
+    	public Point A; 
+    	public Point B;  
+    	public Point C; 
+    	public Point norm;
+    	double z;
+    	Color AColor;
+    	Color BColor;
+    	Color CColor;
+    	public Triangle(Point A,Point B,Point C){
     		this.A = A;
     		this.B = B;
     		this.C = C;
-    		A2 = new Point2D();
-    		B2 = new Point2D();
-    		C2 = new Point2D();
+    		Point normal = normalCalc();
+    		this.norm = normal;
+    		A.addNormal(normal);
+    		B.addNormal(normal);
+    		C.addNormal(normal);
     		color = new Color(0);
     	}
-    	Color color;
-    	public Point3D A; 
-    	public Point3D B;  
-    	public Point3D C; 
-    	public Point3D AV; 
-    	public Point3D BV;  
-    	public Point3D CV; 
-    	public Point2D A2;
-    	public Point2D B2;
-    	public Point2D C2;
-    	double z;
-    	public Point3D norm;
-    	public Point3D normV;
-    	public Point2D norm2D;
+    	
+    	
+    	private Point normalCalc(){
+    		Point p = Point.sub(B, A);
+    		Point q = Point.sub(C, A);
+    		Point n = Point.normalize(Point.cross(p, q));
+    		return n;
+    	}
 	};
