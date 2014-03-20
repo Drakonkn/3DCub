@@ -41,7 +41,7 @@ public class MainWindow extends JFrame implements ActionListener {
 	public MainWindow(){
 		super();
 		spotLight = new Vector<SpotLight>();
-		spotLight.add(new SpotLight(new Color(0xFF0000),new Point(25, -25,  25)));
+		spotLight.add(new SpotLight(new Color(0xFF0000),new Point(25, -25,  -25)));
 		spotLight.add(new SpotLight(new Color(0x00FF00),new Point(25, -25,  25)));
 		spotLight.add(new SpotLight(new Color(0x0000FF),new Point(25,  25,  25)));
 		origin = new Model();
@@ -131,15 +131,14 @@ public class MainWindow extends JFrame implements ActionListener {
 				}
 			}
 		});
-		rep();
 		javax.swing.Timer timer  = new javax.swing.Timer(100,this);
 		timer.start();
 	}
 	
 	private void rep(){
+		getView();
 		getProject();
 		painter.repaint();
-		setFocusable(true);
 	}
 
 	  public static void main(String[] args){
@@ -162,31 +161,27 @@ public class MainWindow extends JFrame implements ActionListener {
 				for (int k =0; k<spotLight.size();k++){
 					spotLight.get(k).getCoordinates().setView(pointToView(spotLight.get(k).getCoordinates()));
 				}
-				
-				origTriangle.norm.setView(pointToView(origTriangle.norm));
-				double xN = origTriangle.norm.getX();
-				double yN = origTriangle.norm.getY();
-				double zN = origTriangle.norm.getZ();
-				
-				origTriangle.AColor = calcColor(origTriangle.A, xN, yN, zN);
-				origTriangle.BColor = calcColor(origTriangle.B, xN, yN, zN);
-				origTriangle.CColor = calcColor(origTriangle.C, xN, yN, zN);
+				origTriangle.AColor = calcColor(origTriangle.A,origTriangle.normalCalc());
+				origTriangle.BColor = calcColor(origTriangle.B,origTriangle.normalCalc());
+				origTriangle.CColor = calcColor(origTriangle.C,origTriangle.normalCalc());
 			}
 			return ;
 		}
 	  
-	  private Color calcColor(Point A,double xN,double yN,double zN){
-		  	double xA,yA,zA;
+	  private Color calcColor(Point A, Normal n){
+		  	double xA,yA,zA,xN,yN,zN;
 			xA = A.getX();
 			yA = A.getY();
 			zA = A.getZ();
+			xN = n.getX();
+			yN = n.getY();
+			zN = n.getZ();
 			int r = 0,g = 0,b = 0;
 
 			SpotLight s;
 			for (int i = 0; i<spotLight.size();i++){
 				s = spotLight.get(i);	
 				double cosA = s.getCos(xN,yN,zN,xA,yA,zA);
-				System.out.println(xN+" "+yN+" "+zN);
 				double cosB = 1;
 				double dist = Point.calcDist(s.getCoordinates(), A);
 				dist /= 30;
@@ -195,7 +190,7 @@ public class MainWindow extends JFrame implements ActionListener {
 				g += (int) (s.getG()* mulA);
 				b += (int) (s.getB()* mulA);
 			}
-			int lightCount = spotLight.size();
+			//int lightCount = spotLight.size();
 			
 			if (r>255)r=255;
 			if (g>255)g=255;
@@ -204,7 +199,7 @@ public class MainWindow extends JFrame implements ActionListener {
 			if (r<20)r=20;
 			if (g<20)g=20;
 			if (b<20)b=20;
-			return new Color((int)(r/lightCount),(int)(g/lightCount),(int)(b/lightCount));
+			return new Color((int)(r),(int)(g),(int)(b));
 	  }
 	  
 	  public static double[][] product(double[][] first, double[][] second, int row1, int col1,
@@ -221,9 +216,6 @@ public class MainWindow extends JFrame implements ActionListener {
 		   }
 		
 	  private void getProject(){
-		
-			getView();
-			
 			for (int k =0; k<spotLight.size();k++){
 				pointTo2D(spotLight.get(k).coordinates);
 			}
@@ -233,17 +225,15 @@ public class MainWindow extends JFrame implements ActionListener {
 				pointTo2D(origin.getVector().get(i).A);
 				pointTo2D(origin.getVector().get(i).B);
 				pointTo2D(origin.getVector().get(i).C);
-				pointTo2D(origin.getVector().get(i).norm);
 				
-				vector.get(i).z = (origin.getVector().get(i).A.getzV() + origin.getVector().get(i).B.getzV()
-						+ origin.getVector().get(i).C.getzV())/3;
+				vector.get(i).z = (origin.getVector().get(i).A.getZV() + origin.getVector().get(i).B.getZV()
+						+ origin.getVector().get(i).C.getZV())/3;
 			}
 			
 			return;
 		}
-		
-		
-		private Point pointToView(Point point){
+			
+	  private Point pointToView(Point point){
 			double cosa = Math.cos(Math.toRadians(a));
 			double cosf = Math.cos(Math.toRadians(f));
 			
@@ -268,26 +258,33 @@ public class MainWindow extends JFrame implements ActionListener {
 			V = product(V, scale, 4, 4, 4, 4);
 			
 			Point res = new Point(product(point.getMatrix(), V, 1, 4, 4, 4));
-			res.setNorm(point.getxN(), point.getyN(), point.getzN());
+			double nm[][] = new double[1][4];
+			nm[0][0] = point.getXN();
+			nm[0][1] = point.getYN();
+			nm[0][2] = point.getZN();
+			nm[0][3] = 1;
+			double nmv[][] = product(nm, V, 1, 4, 4, 4);
+			Normal nmvp = Point.normalize(new Point(nmv));
+			res.setNorm(nmvp.getX(), nmvp.getY(), nmvp.getZ());
 			return res;
 		}
 		
-		private void pointTo2D(Point point){
+	  public static Point pointTo2D(Point point){
 			double screenDist = 11;
 			double C1 = 100;
 			double C2 = 100;
-			int x = (int)(screenDist * (point.getxV()/ point.getzV() + C1));
-			int y = (int)(screenDist * (point.getyV()/ point.getzV() + C2));
+			int x = (int)(screenDist * (point.getXV()/ point.getZV() + C1));
+			int y = (int)(screenDist * (point.getYV()/ point.getZV() + C2));
 			point.setX2D(x);
 			point.setY2D(y);
+			return point;
 		}
 		
-		double[][] extend(double[][] matrix) {
-			double res[][] = new double[4][4];
-			
-			for (int i = 0; i<3;i++)
-				for (int j = 0; j<3;j++)
-					res[i][j] = matrix[i][j];
+	  double[][] extend(double[][] matrix) {
+		  double res[][] = new double[4][4];
+		  for (int i = 0; i<3;i++)
+			  for (int j = 0; j<3;j++)
+				  res[i][j] = matrix[i][j];
 			
 			res[3][0] = 0;
 			res[3][1] = 0;
@@ -298,8 +295,6 @@ public class MainWindow extends JFrame implements ActionListener {
 			res[1][3] = 0;
 			res[2][3] = 0;
 			res[3][3] = 1;
-
-			
 			return res;
 			  
 		   }

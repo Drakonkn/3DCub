@@ -1,14 +1,13 @@
 import java.awt.Color;
 
 
-public class Point {
+public class Point implements Normal {
 	private double x;
 	private double y;
 	private double z;
 	Color color = new Color(0xFFFFFF);
-	private double xN = 0;
-	private double yN = 0;
-	private double zN = 0;
+	
+	Normal norm = null;
 	
 	private int x2D = 0;
 	private int y2D = 0;
@@ -25,14 +24,15 @@ public class Point {
 		this.color = color;
 	}
 	
-	Point getNormal(){
-		return new Point(xN,yN,zN);
+	Normal getNormal(){
+		return norm;
 	}
 	
 	public void setView(Point view){
 		this.xV = view.getX();
 		this.yV = view.getY();
 		this.zV = view.getZ();
+		this.norm = view.norm;
 	}
 	
 	public int getX2D() {
@@ -51,35 +51,41 @@ public class Point {
 		y2D = y2d;
 	}
 
-	public double getxV() {
+	public double getXV() {
 		return xV;
 	}
 
-	public void setxV(double xV) {
+	public void setXV(double xV) {
 		this.xV = xV;
 	}
 
-	public double getyV() {
+	public double getYV() {
 		return yV;
 	}
 
-	public void setyV(double yV) {
+	public void setYV(double yV) {
 		this.yV = yV;
 	}
 
-	public double getzV() {
+	public double getZV() {
 		return zV;
 	}
 
-	public void setzV(double zV) {
+	public void setZV(double zV) {
 		this.zV = zV;
 	}
 	
 
 	public void setNorm(double xN,double yN, double zN ){
-		this.xN = xN;
-		this.yN = yN;
-		this.zN = zN;
+		if (norm == null){
+			norm = new Point(xN,yN,zN);
+		}
+		else{
+		norm.setX(xN);
+		norm.setY(yN);
+		norm.setZ(zN);
+		}
+		norm = normalize(norm);
 	}
 	
 	public static Point sub(Point p1, Point p2){
@@ -90,10 +96,10 @@ public class Point {
 		return new Point(a.y * b.z - a.z*b.y, a.z*b.x - a.x*b.z, a.x*b.y - a.y*b.x);
 	}
 	
-	public static Point normalize(Point p1) {
-		double length = Math.sqrt(p1.x*p1.x+p1.y*p1.y+p1.z*p1.z);
+	public static Normal normalize(Normal norm2) {
+		double length = Math.sqrt(norm2.getX()*norm2.getX()+norm2.getY()*norm2.getY()+norm2.getZ()*norm2.getZ());
 		int mul = 1;
-		return new Point(mul * (p1.x/length), mul*(p1.y/length),mul*(p1.z/length));
+		return new Point(mul * (norm2.getX()/length), mul*(norm2.getY()/length),mul*(norm2.getZ()/length));
 	}
 	
 	public Point(double x, double y, double z){
@@ -142,29 +148,31 @@ public class Point {
 		
 	}
 	
-	public void addNormal(Point norm){
-		if (xN == 0 && yN == 0 && zN == 0){
-			xN = norm.x;yN = norm.y;zN = norm.z;
+	public void addNormal(Normal norm){
+		if (this.norm == null && this.norm == null && this.norm == null){
+			this.norm = new Point(norm.getX(), norm.getY(), norm.getZ());
 		}
 		else{
-			xN += norm.x;yN += norm.y;zN += norm.z;
-			double length = Math.sqrt((xN * xN)+(yN * yN)+(zN * zN));
-			xN /= length;
-			yN /= length;
-			zN /= length;
+			this.norm.setX(this.norm.getX() + norm.getX());
+			this.norm.setY(this.norm.getY() + norm.getY());
+			this.norm.setZ(this.norm.getZ() + norm.getZ());
+			this.norm = normalize(this.norm);
 		}
 	}
 
-	public double getxN() {
-		return xN;
+	public double getXN() {
+		if(norm == null) return 0;
+		return this.norm.getX();
 	}
 
-	public double getyN() {
-		return yN;
+	public double getYN() {
+		if(norm == null) return 0;
+		return this.norm.getY();
 	}
 
-	public double getzN() {
-		return zN;
+	public double getZN() {
+		if(norm == null) return 0;
+		return this.norm.getZ();
 	}
 	
 }

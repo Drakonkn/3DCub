@@ -82,6 +82,17 @@ public class SpotLight implements ActionListener {
 		double cos = mul/(length1*length2);
 		return cos<0?0:cos;
 	}
+	
+	public double getCosV(double x2, double y2, double z2,double x,double y, double z) {
+		double X = coordinates.getXV() -x;
+		double Y = coordinates.getYV() -y;
+		double Z = coordinates.getZV() -z;
+		double mul = (x2*X) + (y2*Y) + (z2*Z);
+		double length1 = Math.sqrt(X*X+Y*Y+Z*Z);
+		double length2 = Math.sqrt(x2*x2+y2*y2+z2*z2);
+		double cos = mul/(length1*length2);
+		return Math.abs(cos);//cos;
+	}
 
 	public void actionPerformed(ActionEvent e) {
 //		rotateX();
